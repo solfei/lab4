@@ -41,6 +41,15 @@ public class BST<T extends Comparable<T>> {
      */
     public BST(BST<T> bst) {
 
+        if (bst == null) {
+            return;
+        }
+        if (bst.getSize() == 0) {
+            root = null;
+        } else {
+            root = bst.root;
+            copyHelper(bst.root);
+        }
     }
 
     /**
@@ -50,7 +59,13 @@ public class BST<T extends Comparable<T>> {
      *             data to copy
      */
     private void copyHelper(Node node) {
-
+        if (node == null) {
+            return;
+        } else {
+            copyHelper(node.left);
+            copyHelper(node.right);
+            insert(node.data);
+        }
     }
 
     /**
@@ -222,20 +237,16 @@ public class BST<T extends Comparable<T>> {
      *             in which to insert
      */
     private void insert(T data, Node node) {
-        if (data.compareTo(node.data) < 0) {
-            if (node.left == null) {
-                node.left = new Node(data);
-            } else {
-                insert(data, node.left);
-            }
+        if (node == null) {
+            node = new Node(data);
+        }
 
+        if (data.compareTo(node.data) < 0) {
+            insert(data, node.left);
         } else if (data.compareTo(node.data) > 0) {
-            if (node.right == null) {
-                node.right = new Node(data);
-            } else {
-                insert(data, node.right);
-            }
-        } else {
+            insert(data, node.right);
+        } else { // if equal to one another, checks if left is null (creates new node), otherwise
+                 // insertion
             if (node.left == null) {
                 node.left = new Node(data);
             } else {
@@ -262,7 +273,7 @@ public class BST<T extends Comparable<T>> {
             root = null;
         } else {
             Node toRemove = remove(data, root);
-            // code to remove
+
         }
     }
 
@@ -336,7 +347,8 @@ public class BST<T extends Comparable<T>> {
         // 1. Search for the minimum value in the right subtree of the node
         // 2. Set the node's data to be the minimum value in the node's right subtree
         // 3. Set node's rightchild equal to the recursive call of remove helper,
-        // passing it node's お茶 (what?) and the minimum data of node's right subtree
+        // passing it node's お茶 あれあれなに (what?) and the minimum data of node's right
+        // subtree
         // (i.e. delete the duplicate value in the right subtree)
         // 5. return the node
     }
@@ -352,7 +364,7 @@ public class BST<T extends Comparable<T>> {
      *         in the tree
      */
     public boolean search(T data) {
-        return false;
+        return search(data, root);
     }
 
     /**
@@ -364,6 +376,17 @@ public class BST<T extends Comparable<T>> {
      *         in the tree
      */
     private boolean search(T data, Node node) {
+        if (node == null) {
+            return false;
+        }
+
+        if (node.data.compareTo(data) == 0) {
+            return true;
+        } else if (data.compareTo(node.data) < 0) {
+            search(data, node.left);
+        } else {
+            search(data, node.right);
+        }
         return false;
     }
 
