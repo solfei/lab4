@@ -203,24 +203,6 @@ class BSTTest {
     }
 
     @Test
-    void testIsBalanced() {
-        BST<String> a = new BST<>();
-        assertTrue(a.isBalanced());
-        a = new BST<>(new String[] { "A", "B", "C", "D", "E", "F", "G" });
-        assertTrue(a.isBalanced());
-        a = new BST<>();
-        a.insert("C");
-        a.insert("B");
-        a.insert("A");
-        assertFalse(a.isBalanced());
-        a.insert("D");
-        a.insert("E");
-        assertTrue(a.isBalanced());
-        a.insert("F");
-        assertFalse(a.isBalanced());
-    }
-
-    @Test
     void testPreOrderString() {
         BST<String> empty = new BST<>();
         assertEquals("\n", empty.preOrderString());
@@ -266,6 +248,23 @@ class BSTTest {
         states.insert("AK");
 
         assertEquals("AK CA MI IA MN HI \n", states.postOrderString());
+    }
+
+    @Test
+    void testDepthOrderString() {
+        BST<String> empty = new BST<>();
+        assertEquals("\n", empty.depthOrderString());
+
+        BST<String> bst = new BST<>();
+        bst.insert("5");
+        bst.insert("3");
+        bst.insert("7");
+        assertEquals("5 3 7 \n", bst.depthOrderString());
+
+        bst.insert("4");
+        bst.insert("6");
+        bst.insert("9");
+        assertEquals("5 3 7 4 6 9 \n", bst.depthOrderString());
     }
 
 }

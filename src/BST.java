@@ -77,6 +77,9 @@ public class BST<T extends Comparable<T>> {
      *                                  unsorted
      */
     public BST(T[] array) throws IllegalArgumentException {
+        if (array == null) {
+            return;
+        }
         boolean isSorted = true;
         for (int i = 0; i < array.length - 1; i++) {
             if (array[i].compareTo(array[i + 1]) > 0) {
@@ -290,14 +293,14 @@ public class BST<T extends Comparable<T>> {
                 if (temp.left == null) {
                     root.right.left = root.left;
                     root = root.right;
-                    System.out.print("ok1");
+                    System.out.print("1");
                 } else {
                     while (temp.left.left != null) {
                         temp = temp.left;
                     }
                     root.data = temp.left.data;
-                    System.out.print("ok");
-                    temp.left = null;
+                    System.out.print("2");
+                    temp.left = temp.left.right;
                 }
             }
         } else {
@@ -377,48 +380,37 @@ public class BST<T extends Comparable<T>> {
             return false;
         }
 
-        if (node.data.compareTo(data) == 0) {
+        if (data.compareTo(node.data) == 0) {
             return true;
         } else if (data.compareTo(node.data) < 0) {
-            search(data, node.left);
+            return search(data, node.left);
         } else {
-            search(data, node.right);
+            return search(data, node.right);
         }
-        return false;
+
     }
 
     /**
-     * Determines whether a BST is balanced
-     * using the definition given in the course
-     * lesson notes
-     * Note that we will consider an empty tree
-     * to be trivially balanced
+     * Returns a String containing the data
+     * in depth order
      * 
-     * @return whether the BST is balanced
+     * @return a String of data in post order
      */
-    public boolean isBalanced() {
-        if (root == null) {
-            return true;
-        }
-        return isBalanced(root);
+    public String depthOrderString() {
+        StringBuilder depthOrder = new StringBuilder("");
+        depthOrderString(root, depthOrder);
+        return depthOrder.toString();
     }
 
     /**
-     * Helper method for isBalanced
-     * to determine if a BST is balanced
+     * Helper method to depthOrderString
+     * Inserts the data in depth order into a String
      * 
-     * @param n a Node in the tree
-     * @return whether the BST is balanced
-     *         at the level of the given Node
+     * @param node       the current Node
+     * @param depthOrder a String containing the data
      */
-    private boolean isBalanced(Node n) {
-        if (n != null) {
-            if (Math.abs(getHeight(n.left) - getHeight(n.right)) > 1) {
-                return false;
-            }
-            return isBalanced(n.left) && isBalanced(n.right);
-        }
-        return true;
+    private void depthOrderString(Node node, StringBuilder depthOrder) {
+
     }
 
     /**
@@ -428,9 +420,9 @@ public class BST<T extends Comparable<T>> {
      * @return a String of data in post order
      */
     public String preOrderString() {
-        StringBuilder postOrder = new StringBuilder("");
-        preOrderString(root, postOrder);
-        return postOrder.toString() + "\n";
+        StringBuilder preOrder = new StringBuilder("");
+        preOrderString(root, preOrder);
+        return preOrder.toString() + "\n";
     }
 
     /**
@@ -457,9 +449,9 @@ public class BST<T extends Comparable<T>> {
      * @return a String of data in order
      */
     public String inOrderString() {
-        StringBuilder postOrder = new StringBuilder("");
-        inOrderString(root, postOrder);
-        return postOrder.toString() + "\n";
+        StringBuilder inOrder = new StringBuilder("");
+        inOrderString(root, inOrder);
+        return inOrder.toString() + "\n";
     }
 
     /**
@@ -509,32 +501,29 @@ public class BST<T extends Comparable<T>> {
     }
 
     public static void main(String[] args) {
-        BST<Integer> states = new BST<>();
-        states.insert(5);
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.insert(8);
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.insert(7);
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.insert(0);
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.insert(3);
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.insert(6);
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.remove(5);
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.remove(6);
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
+        BST<String> states = new BST<>();
 
+        states.insert("HI");
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.insert("MN");
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.insert("CA");
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.insert("IA");
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.insert("MI");
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.insert("AK");
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.remove("HI");
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
     }
 
 }
