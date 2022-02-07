@@ -132,7 +132,7 @@ public class BST<T extends Comparable<T>> {
      * @return the size of the tree
      */
     public int getSize() {
-        return -1;
+        return getSize(root);
     }
 
     /**
@@ -142,7 +142,10 @@ public class BST<T extends Comparable<T>> {
      * @return the size of the tree
      */
     private int getSize(Node node) {
-        return -1;
+        if (node == null) {
+            return 0;
+        }
+        return 1 + getSize(node.left) + getSize(node.right);
     }
 
     /**
@@ -237,14 +240,18 @@ public class BST<T extends Comparable<T>> {
      *             in which to insert
      */
     private void insert(T data, Node node) {
-        if (node == null) {
-            node = new Node(data);
-        }
-
         if (data.compareTo(node.data) < 0) {
-            insert(data, node.left);
+            if (node.left == null) {
+                node.left = new Node(data);
+            } else {
+                insert(data, node.left);
+            }
         } else if (data.compareTo(node.data) > 0) {
-            insert(data, node.right);
+            if (node.right == null) {
+                node.right = new Node(data);
+            } else {
+                insert(data, node.right);
+            }
         } else { // if equal to one another, checks if left is null (creates new node), otherwise
                  // insertion
             if (node.left == null) {
@@ -269,11 +276,32 @@ public class BST<T extends Comparable<T>> {
             throw new IllegalStateException("remove(): Tree is empty");
         }
 
-        if (root.data.compareTo(data) == 0 && root.left == null && root.right == null) {
-            root = null;
-        } else {
-            Node toRemove = remove(data, root);
+        if (root.data.compareTo(data) == 0) {
+            if (root.left == null && root.right == null) { // if no children
+                root = null;
+            }
 
+            else if (root.right == null && root.left != null) { // left child
+                root = root.left;
+            } else if (root.left == null && root.right != null) { // right child
+                root = root.right;
+            } else { // two children
+                Node temp = root.right;
+                if (temp.left == null) {
+                    root.right.left = root.left;
+                    root = root.right;
+                    System.out.print("ok1");
+                } else {
+                    while (temp.left.left != null) {
+                        temp = temp.left;
+                    }
+                    root.data = temp.left.data;
+                    System.out.print("ok");
+                    temp.left = null;
+                }
+            }
+        } else {
+            remove(data, root);
         }
     }
 
@@ -285,50 +313,26 @@ public class BST<T extends Comparable<T>> {
      * @return an updated reference variable
      */
     private Node remove(T data, Node node) {
-        // if (node.data.compareTo(data) == 0 && node.left == null && node.right ==
-        // null) { // leaf
-        // node = null;
-        // }
-
-        // If node is null
-        // 1. return node
         if (node == null) {
+            // お茶 あれあれなに はいそうですね(what?)
             return node;
         }
-        // 2. Otherwise, if value < the node's data
-        // 1.set node's leftchild equal to the recursive call of remove helper on node's
-        // leftchild
-        if (node.data.compareTo(data) < 0) {
-            node.left = remove(data, node.left);
-            // 3. Otherwise, if value > the node's data
-            // 1. set node's rightchild equal to the recursive call of remove helper on
-            // node's rightchild
-        } else if (node.data.compareTo(data) > 0) {
-            node.right = remove(data, node.right);
-        }
 
-        else {
-            // 4. Otherwise,
-            // 1. If node is a leaf node
-            // 1. Set node to null
-            if (node.left == null && node.right == null) {
+        if (data.compareTo(node.data) < 0) {
+            node.left = remove(data, node.left);
+        } else if (data.compareTo(node.data) > 0) {
+            node.right = remove(data, node.right);
+        } else { // when data matches and we need to remove the node
+            if (node.left == null && node.right == null) { // if no children
                 node = null;
             }
-            // 2. Otherwise if node has a leftchild but no rightchild
-            // 1. set the leftchild to be the node
-            else if (node.right == null && node.left != null) {
+
+            else if (node.right == null && node.left != null) { // left child
                 node = node.left;
-                // 3. Otherwise if node has a rightchild but no leftchild
-                // 1. set the rightchild to be the node
-            } else if (node.left == null && node.right != null) {
+
+            } else if (node.left == null && node.right != null) { // right child
                 node = node.right;
-            } else {
-                // first move right
-                // then we check a buncha left, for a left with no left of its own. smallest guy
-                // if the smallest guy is a leaf node, then node to remove = small guy.data, and
-                // smallguy = null
-                // if smallguy not leaf node, then nodetoremove.right = smallguy.right; and
-                // smallguy = null
+            } else { // two children
                 Node temp = node.right;
                 if (temp.left == null) {
                     node.data = temp.data;
@@ -343,14 +347,7 @@ public class BST<T extends Comparable<T>> {
             }
         }
         return node; // step 5!
-        // 4. Otherwise
-        // 1. Search for the minimum value in the right subtree of the node
-        // 2. Set the node's data to be the minimum value in the node's right subtree
-        // 3. Set node's rightchild equal to the recursive call of remove helper,
-        // passing it node's お茶 あれあれなに (what?) and the minimum data of node's right
-        // subtree
-        // (i.e. delete the duplicate value in the right subtree)
-        // 5. return the node
+
     }
 
     /*** ADDITIONAL OPERATIONS ***/
@@ -431,7 +428,9 @@ public class BST<T extends Comparable<T>> {
      * @return a String of data in post order
      */
     public String preOrderString() {
-        return "\n";
+        StringBuilder postOrder = new StringBuilder("");
+        preOrderString(root, postOrder);
+        return postOrder.toString() + "\n";
     }
 
     /**
@@ -442,7 +441,13 @@ public class BST<T extends Comparable<T>> {
      * @param preOrder a String containing the data
      */
     private void preOrderString(Node node, StringBuilder preOrder) {
-
+        if (node == null) {
+            return;
+        } else {
+            preOrder.append(node.data + " ");
+            preOrderString(node.left, preOrder);
+            preOrderString(node.right, preOrder);
+        }
     }
 
     /**
@@ -452,7 +457,9 @@ public class BST<T extends Comparable<T>> {
      * @return a String of data in order
      */
     public String inOrderString() {
-        return "\n";
+        StringBuilder postOrder = new StringBuilder("");
+        inOrderString(root, postOrder);
+        return postOrder.toString() + "\n";
     }
 
     /**
@@ -463,7 +470,13 @@ public class BST<T extends Comparable<T>> {
      * @param inOrder a String containing the data
      */
     private void inOrderString(Node node, StringBuilder inOrder) {
-
+        if (node == null) {
+            return;
+        } else {
+            inOrderString(node.left, inOrder);
+            inOrder.append(node.data + " ");
+            inOrderString(node.right, inOrder);
+        }
     }
 
     /**
@@ -473,7 +486,9 @@ public class BST<T extends Comparable<T>> {
      * @return a String of data in post order
      */
     public String postOrderString() {
-        return "\n";
+        StringBuilder postOrder = new StringBuilder("");
+        postOrderString(root, postOrder);
+        return postOrder.toString() + "\n";
     }
 
     /**
@@ -484,6 +499,41 @@ public class BST<T extends Comparable<T>> {
      * @param postOrder a String containing the data
      */
     private void postOrderString(Node node, StringBuilder postOrder) {
+        if (node == null) {
+            return;
+        } else {
+            postOrderString(node.left, postOrder);
+            postOrderString(node.right, postOrder);
+            postOrder.append(node.data + " ");
+        }
+    }
+
+    public static void main(String[] args) {
+        BST<Integer> states = new BST<>();
+        states.insert(5);
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.insert(8);
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.insert(7);
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.insert(0);
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.insert(3);
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.insert(6);
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.remove(5);
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
+        states.remove(6);
+        System.out.print(states.inOrderString());
+        System.out.println(states.getSize());
 
     }
 

@@ -186,6 +186,7 @@ class BSTTest {
         states.remove("MN");
         assertEquals("IA", states.getRoot());
         assertEquals(4, states.getSize());
+
         states.remove("CT");
         assertEquals(4, states.getSize());
         states.remove("IA");
