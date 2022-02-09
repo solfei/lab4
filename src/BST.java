@@ -158,7 +158,10 @@ public class BST<T extends Comparable<T>> {
      * @return the height of the tree
      */
     public int getHeight() {
-        return -2;
+        if (root == null) {
+            return -1;
+        }
+        return getHeight(root);
     }
 
     /**
@@ -169,7 +172,18 @@ public class BST<T extends Comparable<T>> {
      * @return the height of the tree
      */
     private int getHeight(Node node) {
-        return -2;
+        if (node == null) {
+            return -1;
+        }
+
+        int rhs = getHeight(node.right); // 0
+        int lhs = getHeight(node.left); // 0
+
+        if (rhs > lhs) {
+            return rhs + 1;
+        } else {
+            return lhs + 1;
+        }
     }
 
     /**
@@ -181,7 +195,10 @@ public class BST<T extends Comparable<T>> {
      *                                precondition is violated
      */
     public T findMin() throws NoSuchElementException {
-        return null;
+        if (root == null) {
+            throw new NoSuchElementException("findMin(): empty list...");
+        }
+        return findMin(root);
     }
 
     /**
@@ -192,7 +209,10 @@ public class BST<T extends Comparable<T>> {
      * @return the smallest value in the tree
      */
     private T findMin(Node node) {
-        return null;
+        if (node.left == null) {
+            return node.data;
+        }
+        return findMin(node.left);
     }
 
     /**
@@ -204,7 +224,10 @@ public class BST<T extends Comparable<T>> {
      *                                precondition is violated
      */
     public T findMax() throws NoSuchElementException {
-        return null;
+        if (root == null) {
+            throw new NoSuchElementException("findMax(): empty list...");
+        }
+        return findMax(root);
     }
 
     /**
@@ -215,7 +238,10 @@ public class BST<T extends Comparable<T>> {
      * @return the largest value in the tree
      */
     private T findMax(Node node) {
-        return null;
+        if (node.right == null) {
+            return node.data;
+        }
+        return findMax(node.right);
     }
 
     /*** MUTATORS ***/
