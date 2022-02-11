@@ -40,15 +40,15 @@ public class BST<T extends Comparable<T>> {
      *            a copy of
      */
     public BST(BST<T> bst) {
-
         if (bst == null) {
             return;
         }
         if (bst.getSize() == 0) {
             root = null;
         } else {
-            root = bst.root;
-            copyHelper(bst.root);
+            root = new Node(bst.root.data);
+            copyHelper(bst.root.left);
+            copyHelper(bst.root.right);
         }
     }
 
@@ -63,8 +63,8 @@ public class BST<T extends Comparable<T>> {
             return;
         } else {
             copyHelper(node.left);
-            copyHelper(node.right);
             insert(node.data);
+            copyHelper(node.right);
         }
     }
 
@@ -305,33 +305,8 @@ public class BST<T extends Comparable<T>> {
             throw new IllegalStateException("remove(): Tree is empty");
         }
 
-        if (root.data.compareTo(data) == 0) {
-            if (root.left == null && root.right == null) { // if no children
-                root = null;
-            }
+        root = remove(data, root);
 
-            else if (root.right == null && root.left != null) { // left child
-                root = root.left;
-            } else if (root.left == null && root.right != null) { // right child
-                root = root.right;
-            } else { // two children
-                Node temp = root.right;
-                if (temp.left == null) {
-                    root.right.left = root.left;
-                    root = root.right;
-                    System.out.print("1");
-                } else {
-                    while (temp.left.left != null) {
-                        temp = temp.left;
-                    }
-                    root.data = temp.left.data;
-                    System.out.print("2");
-                    temp.left = temp.left.right;
-                }
-            }
-        } else {
-            remove(data, root);
-        }
     }
 
     /**
@@ -362,17 +337,8 @@ public class BST<T extends Comparable<T>> {
             } else if (node.left == null && node.right != null) { // right child
                 node = node.right;
             } else { // two children
-                Node temp = node.right;
-                if (temp.left == null) {
-                    node.data = temp.data;
-                    node.right = temp.right;
-                } else {
-                    while (temp.left.left != null) {
-                        temp = temp.left;
-                    }
-                    node.data = temp.left.data;
-                    temp.left = null;
-                }
+                node.data = findMin(node.right);
+                node.right = remove(findMin(node.right), node.right);
             }
         }
         return node; // step 5!
@@ -527,29 +493,19 @@ public class BST<T extends Comparable<T>> {
     }
 
     public static void main(String[] args) {
-        BST<String> states = new BST<>();
+        BST<String> bst4 = new BST<>();
+        bst4.insert("5");
+        bst4.insert("1");
+        bst4.insert("2");
+        bst4.insert("4");
+        bst4.insert("6");
+        bst4.insert("8");
+        BST<String> bst = new BST<>(bst4);
+        System.out.println(bst4.inOrderString());
+        System.out.println(bst.inOrderString());
+        System.out.println(bst4.getHeight());
+        System.out.println(bst.getHeight());
 
-        states.insert("HI");
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.insert("MN");
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.insert("CA");
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.insert("IA");
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.insert("MI");
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.insert("AK");
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
-        states.remove("HI");
-        System.out.print(states.inOrderString());
-        System.out.println(states.getSize());
     }
 
 }
