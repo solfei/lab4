@@ -1,8 +1,8 @@
 
 /**
  * BST.java
- * @author
- * @author
+ * @author Sol Valdimarsdottir
+ * @author Sam Yadav
  * CIS 22C Lab 4
  */
 
@@ -91,13 +91,16 @@ public class BST<T extends Comparable<T>> {
             throw new IllegalArgumentException();
         }
 
-        root = new Node(array[array.length / 2]);
+        root = new Node(array[array.length / 2]); // insert middle
+        insert(array[array.length / 4]); // insert 1/4 item
+        insert(array[(3 * array.length) / 4]); // insert 3/4 item
 
         for (int i = 0; i < array.length; i++) {
-            if (i == array.length / 2) {
+            if (i == array.length / 2 || i == array.length / 4 || i == (3 * array.length) / 4) { // don't insert
+                                                                                                 // duplicates
                 continue;
             }
-            this.insert(array[i]);
+            this.insert(array[i]); // insert the rest
         }
 
     }
@@ -383,25 +386,48 @@ public class BST<T extends Comparable<T>> {
     }
 
     /**
-     * Returns a String containing the data
-     * in depth order
+     * Creates a String that is a depth order
+     * traversal of the data in the tree
      * 
-     * @return a String of data in post order
+     * @return the level order traversal as a String
      */
     public String depthOrderString() {
+        if (root == null) {
+            return "\n";
+        }
         StringBuilder depthOrder = new StringBuilder("");
-        depthOrderString(root, depthOrder);
-        return depthOrder.toString();
+        Queue<Node> q = new Queue<>();
+        q.enqueue(root);
+        depthOrderString(q, depthOrder);
+        return depthOrder.toString() + "\n";
     }
 
     /**
      * Helper method to depthOrderString
-     * Inserts the data in depth order into a String
+     * Inserts the data in depth order into a String starting from 0
      * 
-     * @param node       the current Node
-     * @param depthOrder a String containing the data
+     * @param q          the Queue in which to store the data
+     * @param depthOrder a StringBuilder containing the data
      */
-    private void depthOrderString(Node node, StringBuilder depthOrder) {
+    // 私は今眠れたい
+    private void depthOrderString(Queue<Node> q, StringBuilder depthOrder) {
+        Node tempNode = q.getFront();
+        q.dequeue();
+        depthOrder.append(tempNode.data + " ");
+
+        /* Enqueue left child */
+        if (tempNode.left != null) {
+            q.enqueue(tempNode.left);
+        }
+
+        /* Enq right child */
+        if (tempNode.right != null) {
+            q.enqueue(tempNode.right);
+        }
+
+        if (!q.isEmpty()) {
+            depthOrderString(q, depthOrder);
+        }
 
     }
 
@@ -490,22 +516,6 @@ public class BST<T extends Comparable<T>> {
             postOrderString(node.right, postOrder);
             postOrder.append(node.data + " ");
         }
-    }
-
-    public static void main(String[] args) {
-        BST<String> bst4 = new BST<>();
-        bst4.insert("5");
-        bst4.insert("1");
-        bst4.insert("2");
-        bst4.insert("4");
-        bst4.insert("6");
-        bst4.insert("8");
-        BST<String> bst = new BST<>(bst4);
-        System.out.println(bst4.inOrderString());
-        System.out.println(bst.inOrderString());
-        System.out.println(bst4.getHeight());
-        System.out.println(bst.getHeight());
-
     }
 
 }
